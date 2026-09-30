@@ -1,139 +1,177 @@
 import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { Sprout, AlertOctagon, Skull, Flame, Biohazard, HelpCircle } from 'lucide-react';
-import RunawayButton from './RunawayButton';
-import AnnoyingModal from './AnnoyingModal';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 
 export default function BadNavbar() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const location = useLocation();
+
+  const handleMenuClick = (menuName) => {
+    setActiveMenu(activeMenu === menuName ? null : menuName);
+  };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#00FF00] border-b-8 border-[#FF007F] shadow-[0_8px_0px_#000000]">
-      {/* Obnoxious Scrolling News Ticker */}
-      <div className="bg-black text-[#FFFF00] font-mono text-xs py-1 overflow-hidden border-b-2 border-white select-none">
-        <div className="animate-marquee-fast font-bold whitespace-nowrap">
-          🚨 BREAKING: LOCUST SWARM SIGNED SPONSORSHIP DEAL WITH FERTILIZER CORP 🌽 
-          ALERT: CORN TASSELS REQUESTING UNION MEMBERSHIP 🚨 
-          WARNING: DO NOT FEED TRACTOR DIESEL TO CITRUS ORCHARDS ⚡ 
-          SOIL PH IN ZONE 9 HAS TRANSCENDED INTO THE FOURTH DIMENSION 🚨
+    <header className="bg-[#d4d0c8] select-none border-b-2 border-[#404040]">
+      {/* OS Style Main Window Titlebar */}
+      <div className="win-titlebar">
+        <div className="flex items-center gap-1.5 truncate">
+          <span className="text-xs">🌾</span>
+          <span className="tracking-wide">
+            AGRO-SYS Enterprise v8.4.1 [AGRI-COMPLIANCE-PORTAL / USDA-SEC-409] - [Operator: AGENT_4091]
+          </span>
+        </div>
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <button className="win-btn !p-0 !px-1.5 !h-4 text-[10px] leading-none" title="Minimize">_</button>
+          <button className="win-btn !p-0 !px-1.5 !h-4 text-[10px] leading-none" title="Maximize">□</button>
+          <button className="win-btn !p-0 !px-1.5 !h-4 text-[10px] leading-none" title="Close Application">✕</button>
         </div>
       </div>
 
-      {/* Main Navbar */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-        
-        {/* Brand / Logo with violent tilt */}
-        <Link 
-          to="/" 
-          className="flex items-center gap-2 bg-[#FFFF00] p-2 brutal-border tilt-left hover:tilt-right transition-transform"
+      {/* Classic Menu Bar (File, Edit, Agronomy, etc.) */}
+      <div className="flex items-center px-1 py-0.5 border-b border-[#808080] text-[11px] bg-[#d4d0c8] relative">
+        <div className="relative">
+          <button
+            onClick={() => handleMenuClick('file')}
+            className={`px-2 py-0.5 hover:bg-[#000080] hover:text-white ${activeMenu === 'file' ? 'bg-[#000080] text-white' : ''}`}
+          >
+            <u>F</u>ile
+          </button>
+          {activeMenu === 'file' && (
+            <div className="absolute top-full left-0 mt-0.5 w-48 win-window p-0.5 shadow-lg z-50">
+              <Link to="/farms" onClick={() => setActiveMenu(null)} className="block px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                New Farm Holding (Ctrl+N)
+              </Link>
+              <Link to="/advisory" onClick={() => setActiveMenu(null)} className="block px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                New Phytosanitary Advisory
+              </Link>
+              <div className="border-t border-[#808080] my-0.5" />
+              <button onClick={() => alert("Print Form 409: Printer offline or missing dot-matrix ribbon.")} className="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                Print Form 409-B (Ctrl+P)
+              </button>
+              <button onClick={() => setActiveMenu(null)} className="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                Exit Station (Alt+F4)
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="relative">
+          <button
+            onClick={() => handleMenuClick('agronomy')}
+            className={`px-2 py-0.5 hover:bg-[#000080] hover:text-white ${activeMenu === 'agronomy' ? 'bg-[#000080] text-white' : ''}`}
+          >
+            <u>A</u>gronomy
+          </button>
+          {activeMenu === 'agronomy' && (
+            <div className="absolute top-full left-0 mt-0.5 w-56 win-window p-0.5 shadow-lg z-50">
+              <Link to="/advisory" onClick={() => setActiveMenu(null)} className="block px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                Launch Gemini AI Reasoning
+              </Link>
+              <Link to="/diagnostics" onClick={() => setActiveMenu(null)} className="block px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                Leaf Spectral Pathology Lab
+              </Link>
+              <div className="border-t border-[#808080] my-0.5" />
+              <button onClick={() => alert("Nitrogen Coefficient: 1.42 lbs/bu. Soil moisture index nominal.")} className="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                Query Soil Nitrate Coefficient
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="relative">
+          <button
+            onClick={() => handleMenuClick('compliance')}
+            className={`px-2 py-0.5 hover:bg-[#000080] hover:text-white ${activeMenu === 'compliance' ? 'bg-[#000080] text-white' : ''}`}
+          >
+            <u>C</u>ompliance
+          </button>
+          {activeMenu === 'compliance' && (
+            <div className="absolute top-full left-0 mt-0.5 w-60 win-window p-0.5 shadow-lg z-50">
+              <button onClick={() => alert("Statutory Audit Status: Holding verified. Zero unresolved pesticide notices.")} className="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                Verify Sub-Section 409 Standing
+              </button>
+              <button onClick={() => alert("Water Rights Ledger: Allocation balanced under Title 7.")} className="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                Inspect Hydrological Ledger
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="relative">
+          <button
+            onClick={() => handleMenuClick('help')}
+            className={`px-2 py-0.5 hover:bg-[#000080] hover:text-white ${activeMenu === 'help' ? 'bg-[#000080] text-white' : ''}`}
+          >
+            <u>H</u>elp
+          </button>
+          {activeMenu === 'help' && (
+            <div className="absolute top-full left-0 mt-0.5 w-64 win-window p-0.5 shadow-lg z-50">
+              <button onClick={() => alert("AGRO-SYS Enterprise v8.4.1\nBuild 2026.09.30-STABLE\nUSDA Precision Agriculture Division\nArchitecture: React 18 + Node.js + Supabase + Google GenAI")} className="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                About AGRO-SYS Enterprise...
+              </button>
+              <button onClick={() => alert("Operator manual: Please submit a written request in triplicate to the local Extension Office.")} className="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white text-[11px]">
+                Technical Reference Manual (PDF)
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="ml-auto flex items-center gap-3 pr-2 text-[10px] text-gray-700">
+          <span className="font-mono">DB: SUPABASE-POSTGRESQL (SSL)</span>
+          <span className="font-mono">AI: GEMINI-PRO (ONLINE)</span>
+        </div>
+      </div>
+
+      {/* Enterprise Tabs Navigation */}
+      <div className="px-2 pt-2 flex items-end gap-1 bg-[#d4d0c8] border-b border-[#ffffff]">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            `px-3 text-xs flex items-center gap-1.5 cursor-pointer select-none ${
+              isActive ? 'win-tab-active' : 'win-tab-inactive hover:bg-[#c4c0b8]'
+            }`
+          }
         >
-          <Sprout className="w-8 h-8 text-[#FF007F] animate-fast-spin" />
-          <div>
-            <div className="font-black text-xl font-impact tracking-widest text-[#000000] flex items-center gap-1">
-              AGRO-CHAOS <span className="bg-[#FF007F] text-white px-1 text-xs font-retro">3000™</span>
-            </div>
-            <div className="text-[10px] font-comic font-bold text-[#800080]">
-              WORLD'S LEAST ACCESSIBLE PRECISION AGRONOMY
-            </div>
-          </div>
-        </Link>
+          <span>📊</span>
+          <span>Land Holding Census (Form-104)</span>
+        </NavLink>
 
-        {/* Misleading Navigation Links */}
-        <nav className="flex flex-wrap items-center gap-2">
-          
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              `px-3 py-2 text-xs font-black uppercase border-4 border-black tracking-wider transition-all ${
-                isActive
-                  ? 'bg-[#FF007F] text-white shadow-[4px_4px_0px_#00FFFF]'
-                  : 'bg-white text-black hover:bg-yellow-300'
-              }`
-            }
-            title="Navigates to Dashboard / Home"
-          >
-            <div className="flex items-center gap-1">
-              <Flame className="w-4 h-4 text-orange-600 animate-bounce" />
-              <span>🚜 EVACUATE FARM (HOME)</span>
-            </div>
-          </NavLink>
+        <NavLink
+          to="/farms"
+          className={({ isActive }) =>
+            `px-3 text-xs flex items-center gap-1.5 cursor-pointer select-none ${
+              isActive ? 'win-tab-active' : 'win-tab-inactive hover:bg-[#c4c0b8]'
+            }`
+          }
+        >
+          <span>🚜</span>
+          <span>Farm & Parcel Registry</span>
+        </NavLink>
 
-          <NavLink
-            to="/farms"
-            className={({ isActive }) =>
-              `px-3 py-2 text-xs font-black uppercase border-4 border-black tracking-wider transition-all ${
-                isActive
-                  ? 'bg-[#FF007F] text-white shadow-[4px_4px_0px_#00FFFF]'
-                  : 'bg-white text-black hover:bg-yellow-300'
-              }`
-            }
-            title="Navigates to Farms & Fields management"
-          >
-            <div className="flex items-center gap-1">
-              <Skull className="w-4 h-4 text-red-600 animate-spin" />
-              <span>💥 DELETE ALL HARVESTS (FARMS)</span>
-            </div>
-          </NavLink>
+        <NavLink
+          to="/advisory"
+          className={({ isActive }) =>
+            `px-3 text-xs flex items-center gap-1.5 cursor-pointer select-none ${
+              isActive ? 'win-tab-active' : 'win-tab-inactive hover:bg-[#c4c0b8]'
+            }`
+          }
+        >
+          <span>🤖</span>
+          <span>Gemini AI Phytosanitary Advisor</span>
+        </NavLink>
 
-          <NavLink
-            to="/advisory"
-            className={({ isActive }) =>
-              `px-3 py-2 text-xs font-black uppercase border-4 border-black tracking-wider transition-all ${
-                isActive
-                  ? 'bg-[#FF007F] text-white shadow-[4px_4px_0px_#00FFFF]'
-                  : 'bg-white text-black hover:bg-yellow-300'
-              }`
-            }
-            title="Navigates to AI Advisory"
-          >
-            <div className="flex items-center gap-1">
-              <AlertOctagon className="w-4 h-4 text-purple-600 animate-pulse" />
-              <span>💀 SOW NIGHTSHADE (AI ADVISORY)</span>
-            </div>
-          </NavLink>
-
-          <NavLink
-            to="/diagnostics"
-            className={({ isActive }) =>
-              `px-3 py-2 text-xs font-black uppercase border-4 border-black tracking-wider transition-all ${
-                isActive
-                  ? 'bg-[#FF007F] text-white shadow-[4px_4px_0px_#00FFFF]'
-                  : 'bg-white text-black hover:bg-yellow-300'
-              }`
-            }
-            title="Navigates to Leaf Diagnostics"
-          >
-            <div className="flex items-center gap-1">
-              <Biohazard className="w-4 h-4 text-yellow-600 animate-spin" />
-              <span>☢️ SPREAD BLIGHT (LEAF CHECK)</span>
-            </div>
-          </NavLink>
-
-        </nav>
-
-        {/* Hostile Runaway Panic Button */}
-        <div>
-          <RunawayButton
-            onClick={() => setModalOpen(true)}
-            className="bg-[#FF007F] text-yellow-300 hover:bg-red-600 text-xs py-2 px-3 shadow-[4px_4px_0px_#000]"
-          >
-            😱 PANIC BUTTON
-          </RunawayButton>
-        </div>
-
+        <NavLink
+          to="/diagnostics"
+          className={({ isActive }) =>
+            `px-3 text-xs flex items-center gap-1.5 cursor-pointer select-none ${
+              isActive ? 'win-tab-active' : 'win-tab-inactive hover:bg-[#c4c0b8]'
+            }`
+          }
+        >
+          <span>🔬</span>
+          <span>Spectral Pathology Lab</span>
+        </NavLink>
       </div>
-
-      {/* Pop-up modal if they catch the panic button */}
-      <AnnoyingModal
-        isOpen={modalOpen}
-        title="🚨 YOU CAUGHT THE RUNAWAY BUTTON!"
-        message="Congratulations! Your reflexes are sharper than a rust-covered disc harrow. Do you want to sell 500 tons of soybeans at a loss?"
-        confirmText="YES, RUIN MY MARGINS"
-        cancelText="NO, TAKE ME TO CORN"
-        onConfirm={() => setModalOpen(false)}
-        onCancel={() => setModalOpen(false)}
-      />
     </header>
   );
 }

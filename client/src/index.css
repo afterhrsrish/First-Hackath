@@ -2,143 +2,223 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Universal Chaos Reset */
-* {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewport='0 0 28 28' style='fill:black;font-size:20px;'><text y='20'>🚜</text></svg>"), help !important;
+/* Enterprise Bureaucratic UI Reset - Soul-Crushing Drab Theme */
+:root {
+  --win-bg: #d4d0c8;
+  --win-dark: #808080;
+  --win-darker: #404040;
+  --win-light: #ffffff;
+  --win-title: #000080;
+  --win-title-gradient: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  --win-text: #000000;
 }
 
-button:hover, a:hover {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewport='0 0 28 28' style='fill:black;font-size:20px;'><text y='20'>💥</text></svg>"), crosshair !important;
+body {
+  background-color: #3a6ea5;
+  background-image: 
+    linear-gradient(45deg, #2f5d8e 25%, transparent 25%), 
+    linear-gradient(-45deg, #2f5d8e 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, #2f5d8e 75%), 
+    linear-gradient(-45deg, transparent 75%, #2f5d8e 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+  font-family: 'Segoe UI', Tahoma, 'MS Sans Serif', Geneva, Arial, sans-serif;
+  font-size: 11px;
+  color: #000000;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* 90s Geocities & Hostile Windows 95 aesthetic */
-.brutal-border {
-  border: 6px ridge #FF007F;
-  box-shadow: 8px 8px 0px #000000, -5px -5px 0px #00FF00;
+/* Classic Windows 98/2000 Bevel Systems */
+.win-window {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #404040;
+  border-right: 2px solid #404040;
+  box-shadow: 1px 1px 0px #000000;
 }
 
-.brutal-border-green {
-  border: 5px outset #00FF00;
-  box-shadow: 6px 6px 0px #FF007F;
+.win-raised {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #404040;
+  border-right: 2px solid #404040;
 }
 
-.brutal-border-yellow {
-  border: 4px dashed #FFFF00;
-  box-shadow: inset 3px 3px 0px #00FFFF, 5px 5px 0px #000;
+.win-sunken {
+  background-color: #ffffff;
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
 }
 
-/* Low contrast troll styling */
-.low-contrast-trap {
-  background-color: #FFF2B2;
-  color: #FFFFFF;
-  text-shadow: 0 0 1px #FFE082;
+.win-sunken-gray {
+  background-color: #e4e0d8;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
 }
 
-.low-contrast-white-on-pink {
-  background-color: #FFB6C1;
-  color: #FFF0F5;
+.win-btn {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #404040;
+  border-right: 2px solid #404040;
+  font-family: Tahoma, 'MS Sans Serif', sans-serif;
+  font-size: 11px;
+  padding: 3px 12px;
+  color: #000000;
+  cursor: default;
+  outline: none;
+  user-select: none;
 }
 
-/* Clashing font mixture */
-.ransom-font-1 {
-  font-family: 'Comic Neue', 'Comic Sans MS', cursive;
-  font-weight: 700;
-}
-.ransom-font-2 {
-  font-family: Papyrus, fantasy;
-}
-.ransom-font-3 {
-  font-family: Impact, sans-serif;
-  letter-spacing: 2px;
-}
-.ransom-font-4 {
-  font-family: 'Times New Roman', serif;
-  font-style: italic;
-}
-.ransom-font-5 {
-  font-family: 'Rubik Glitch', cursive;
-}
-.ransom-font-6 {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.75rem;
+.win-btn:active:not(:disabled) {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+  padding: 4px 11px 2px 13px;
 }
 
-/* Scrolling marquee continuous */
-@keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+.win-btn:disabled {
+  color: #808080;
+  text-shadow: 1px 1px 0px #ffffff;
 }
 
-.animate-marquee {
+.win-titlebar {
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.win-titlebar-inactive {
+  background: linear-gradient(90deg, #808080 0%, #b5b5b5 100%);
+  color: #d4d0c8;
+}
+
+/* Classic Form Controls */
+input[type="text"], input[type="number"], select, textarea {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: Tahoma, 'Segoe UI', sans-serif;
+  font-size: 11px;
+  padding: 2px 4px;
+  border-radius: 0;
+  outline: none;
+}
+
+input[type="text"]:focus, select:focus, textarea:focus {
+  outline: 1px dotted #000000;
+  outline-offset: -2px;
+}
+
+/* Enterprise Tab Control */
+.win-tab-active {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: none;
+  margin-bottom: -2px;
+  padding-top: 4px;
+  padding-bottom: 5px;
+  z-index: 10;
+  font-weight: bold;
+}
+
+.win-tab-inactive {
+  background-color: #b8b4ac;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #ffffff;
+  margin-top: 2px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  color: #404040;
+}
+
+/* Progress bar */
+.win-progress-chunk {
+  background-color: #000080;
+  width: 10px;
+  height: 16px;
+  margin-right: 2px;
   display: inline-block;
-  white-space: nowrap;
-  animation: marquee 12s linear infinite;
 }
 
-.animate-marquee-fast {
-  display: inline-block;
-  white-space: nowrap;
-  animation: marquee 6s linear infinite;
+/* Microscopic dense tables */
+.win-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 11px;
 }
 
-/* Blinking text */
-@keyframes classic-blink {
-  0%, 49% { visibility: visible; }
-  50%, 100% { visibility: hidden; }
+.win-table th {
+  background-color: #d4d0c8;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-bottom: 2px solid #404040;
+  border-right: 2px solid #404040;
+  padding: 2px 6px;
+  text-align: left;
+  font-weight: normal;
+  user-select: none;
 }
 
-.blink-classic {
-  animation: classic-blink 0.8s infinite;
+.win-table td {
+  border-bottom: 1px solid #e0ded8;
+  border-right: 1px solid #e0ded8;
+  padding: 2px 6px;
+  background-color: #ffffff;
 }
 
-/* Diagonal stripe background pattern */
-.hazard-stripes {
-  background: repeating-linear-gradient(
-    45deg,
-    #FFFF00,
-    #FFFF00 15px,
-    #000000 15px,
-    #000000 30px
-  );
+.win-table tr:nth-child(even) td {
+  background-color: #f7f6f2;
 }
 
-.pink-green-stripes {
-  background: repeating-linear-gradient(
-    -45deg,
-    #FF007F,
-    #FF007F 20px,
-    #00FF00 20px,
-    #00FF00 40px
-  );
+.win-table tr.selected td {
+  background-color: #000080 !important;
+  color: #ffffff !important;
 }
 
-/* Chaotic tilt utilities */
-.tilt-left {
-  transform: rotate(-2.5deg);
-}
-.tilt-right {
-  transform: rotate(3deg);
-}
-.tilt-extreme {
-  transform: rotate(7deg) skew(-4deg);
+/* Scrollbar retro styling */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  background-color: #ece9d8;
 }
 
-/* Range slider thumb styling for the 0-3000 year slider */
-input[type=range].chaotic-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #FF007F;
-  border: 4px solid #00FF00;
-  cursor: grab;
+::-webkit-scrollbar-thumb {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #404040;
+  border-right: 2px solid #404040;
 }
-input[type=range].chaotic-slider::-moz-range-thumb {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #FF007F;
-  border: 4px solid #00FF00;
-  cursor: grab;
+
+::-webkit-scrollbar-button {
+  background-color: #d4d0c8;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #404040;
+  border-right: 2px solid #404040;
+  width: 16px;
+  height: 16px;
 }

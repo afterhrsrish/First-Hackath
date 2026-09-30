@@ -1,56 +1,75 @@
 import React, { useState } from 'react';
-import { Camera, Upload, AlertTriangle, CheckCircle, Flame, Bug, RefreshCw, Skull } from 'lucide-react';
-import { fireObnoxiousConfetti } from '../components/ConfettiBomb';
-import { sounds } from '../components/SoundEffects';
-import AnnoyingModal from '../components/AnnoyingModal';
+import RegulatoryDisclaimerModal from '../components/RegulatoryDisclaimerModal';
 
-const SAMPLE_LEAVES = [
-  { name: 'Yellow Striped Corn Leaf', crop: 'Corn (Maize)', symptoms: 'Interveinal chlorosis and yellow striping along lower leaves', icon: '🌽' },
-  { name: 'Brown Spot Vineyard Leaf', crop: 'Wine Grapes', symptoms: 'Circular brown necrotic lesions with yellow halos on leaf surface', icon: '🍇' },
-  { name: 'Curled Aphid Soybean Leaf', crop: 'Soybeans', symptoms: 'Severe upward leaf cupping with sticky honeydew residues and dark sooty mold', icon: '🌱' },
-  { name: 'Powdery White Wheat Blade', crop: 'Winter Wheat', symptoms: 'Fluffy white talcum-powder like fungal patches covering upper leaf surfaces', icon: '🌾' }
+const SPECIMENS = [
+  { name: 'Specimen A: Interveinal Corn Chlorosis', crop: 'Corn (Maize)', symptoms: 'Interveinal chlorosis and yellow striping along lower leaves indicating nitrogen deficit' },
+  { name: 'Specimen B: Vineyard Cercospora Spotting', crop: 'Wine Grapes', symptoms: 'Circular brown necrotic lesions with chlorotic halos across grape canopy foliage' },
+  { name: 'Specimen C: Soybean Aphid Stunting', crop: 'Soybeans', symptoms: 'Severe upward leaf cupping with honeydew deposits and secondary sooty mold growth' },
+  { name: 'Specimen D: Winter Wheat Erysiphe Mildew', crop: 'Winter Wheat', symptoms: 'Fluffy white talcum-powder like fungal patches covering upper adaxial leaf surfaces' }
 ];
 
 export default function Diagnostics() {
-  const [selectedSample, setSelectedSample] = useState(SAMPLE_LEAVES[0]);
-  const [customSymptom, setCustomSymptom] = useState('');
+  const [selectedSpecimen, setSelectedSpecimen] = useState(SPECIMENS[0]);
+  const [sensorCalibrated, setSensorCalibrated] = useState(false);
+  const [calibrationProgress, setCalibrationProgress] = useState(0);
+  const [isCalibrating, setIsCalibrating] = useState(false);
+  
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [customSymptom, setCustomSymptom] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [diagnosticResult, setDiagnosticResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   
-  // Annoying modal
+  // Regulatory waiver
   const [modalOpen, setModalOpen] = useState(false);
+
+  const calibrateSensor = () => {
+    setIsCalibrating(true);
+    setCalibrationProgress(10);
+    const interval = setInterval(() => {
+      setCalibrationProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsCalibrating(false);
+          setSensorCalibrated(true);
+          return 100;
+        }
+        return prev + 25;
+      });
+    }, 250);
+  };
 
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      sounds.playWhoosh();
       const reader = new FileReader();
       reader.onload = (uploadEvent) => {
         setUploadedImage(uploadEvent.target.result);
-        fireObnoxiousConfetti();
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handlePreAnalyze = () => {
-    sounds.playBuzzer();
+    if (!sensorCalibrated) {
+      setErrorMessage('CALIBRATION REQUISITE: You must calibrate the optical sensor chamber before initiating spectral pathology scans.');
+      return;
+    }
+    setErrorMessage('');
     setModalOpen(true);
   };
 
   const executeAnalysis = async () => {
     setModalOpen(false);
-    setLoading(true);
+    setIsAnalyzing(true);
     setErrorMessage('');
     setDiagnosticResult(null);
 
     try {
       const payload = {
-        crop_type: selectedSample.crop,
-        symptoms: customSymptom || selectedSample.symptoms,
-        growth_stage: 'Vegetative to Reproductive',
+        crop_type: selectedSpecimen.crop,
+        symptoms: customSymptom || selectedSpecimen.symptoms,
+        growth_stage: 'Vegetative to Reproductive Transition',
         image_data: uploadedImage || null
       };
 
@@ -62,283 +81,303 @@ export default function Diagnostics() {
 
       const json = await res.json();
       if (json.success) {
-        fireObnoxiousConfetti();
         setDiagnosticResult(json.diagnostic);
       } else {
-        sounds.playBuzzer();
-        setErrorMessage(json.error || 'Diagnostic failed');
+        setErrorMessage(json.error || 'Diagnostic computation failed');
       }
     } catch (err) {
-      sounds.playBuzzer();
-      setErrorMessage(err.message || 'Error communicating with vision diagnostic service');
+      setErrorMessage(err.message || 'Sensor link timeout');
     } finally {
-      setLoading(false);
+      setIsAnalyzing(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFF00] p-4 md:p-8 space-y-8 select-none">
+    <div className="p-3 max-w-7xl mx-auto space-y-3">
       
-      {/* Page Header */}
-      <section className="bg-white border-8 border-black p-6 brutal-border tilt-left">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl md:text-5xl font-black font-impact tracking-wider text-black uppercase flex items-center gap-3">
-              <Camera className="w-10 h-10 text-[#FF007F] animate-fast-spin" />
-              <span>LEAF SYMPTOM & PATHOLOGY SCANNER</span>
-            </h1>
-            <p className="font-comic text-sm text-[#800080] font-bold mt-1">
-              Upload suspected diseased foliage into our violently tilted image chamber.
-            </p>
-          </div>
+      {/* Title Window */}
+      <div className="win-window p-3 space-y-2">
+        <div className="win-titlebar">
+          <span>Optical Leaf Spectral Pathology Chamber (Model SC-904-B)</span>
+          <span className="text-[10px] font-mono">SPEC-CALIBRATION: {sensorCalibrated ? 'VERIFIED' : 'REQUIRED'}</span>
+        </div>
 
-          <div className="bg-[#FF007F] text-yellow-300 font-impact text-sm p-3 border-4 border-black">
-            🚨 ROTATED IMAGE CHAMBER READY
-          </div>
+        <div className="text-[11px] text-gray-800">
+          This laboratory module performs multi-spectral visual chlorosis and necrosis scanning. 
+          Pursuant to Standard 802, the optical sensor array must be calibrated prior to each photographic batch.
         </div>
 
         {errorMessage && (
-          <div className="mt-4 p-3 bg-red-600 border-4 border-black text-white font-black text-sm flex items-center justify-between shadow-[4px_4px_0px_#000] animate-pulse">
-            <span>{errorMessage}</span>
-            <button onClick={() => setErrorMessage('')} className="underline text-xs">DISMISS</button>
+          <div className="p-2 bg-[#ffe6e6] border border-[#cc0000] text-[#800000] text-[11px] font-mono">
+            {errorMessage}
           </div>
         )}
-      </section>
+      </div>
 
-      {/* Main Grid: Rotated Dropzone + Sample Selector */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Main Grid: Sensor Controls vs Lab Pathology Output */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
         
-        {/* Left Column: Rotated Dropzone & Controls */}
-        <div className="bg-[#FFF0F5] border-6 border-[#FF007F] p-6 shadow-[10px_10px_0px_#000000] space-y-6 tilt-right">
-          
-          <h2 className="text-xl font-black font-impact text-black uppercase flex items-center gap-2 border-b-4 border-black pb-3">
-            <Flame className="w-6 h-6 text-red-600 animate-bounce" />
-            1. VIOLENTLY ROTATED IMAGE DROPZONE
-          </h2>
+        {/* Left Column: Calibration & Optical Chamber (5 cols) */}
+        <div className="lg:col-span-5 win-window p-3 space-y-3">
+          <div className="win-titlebar">
+            <span>Sensor Chamber & Specimen Loader</span>
+          </div>
 
-          {/* Rotated Dropzone */}
-          <div className="relative p-6 bg-yellow-200 border-6 border-dashed border-[#FF007F] tilt-extreme hover:rotate-0 transition-transform cursor-pointer text-center group">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileUpload}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-            />
-            
-            {uploadedImage ? (
-              <div className="space-y-2">
-                <img
-                  src={uploadedImage}
-                  alt="Uploaded leaf"
-                  className="max-h-48 mx-auto border-4 border-black shadow-[4px_4px_0px_#00FF00]"
-                />
-                <p className="font-retro text-xs text-[#FF007F] font-bold">
-                  ✅ LEAF SPECIMEN LOADED INTO SENSOR
-                </p>
-                <p className="text-[10px] font-comic text-black">
-                  Click or drag another image to replace
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3 py-6">
-                <Upload className="w-12 h-12 text-[#FF007F] mx-auto animate-bounce group-hover:scale-125 transition-transform" />
-                <div className="font-impact text-xl text-black uppercase">
-                  DROP LEAF IMAGE HERE (OR CLICK)
+          {/* Mandatory Calibration Gate */}
+          <div className="p-2 win-sunken-gray border border-[#808080] space-y-2 select-none">
+            <div className="flex justify-between items-center text-[10px]">
+              <span className="font-bold text-gray-800">Optical Sensor Calibration (White Balance 5200K):</span>
+              <span className={`font-mono font-bold ${sensorCalibrated ? 'text-green-800' : 'text-red-700'}`}>
+                {sensorCalibrated ? '✓ CALIBRATED' : 'UNVERIFIED'}
+              </span>
+            </div>
+
+            {isCalibrating && (
+              <div className="space-y-1">
+                <div className="w-full win-sunken h-3 bg-gray-200 p-0.5">
+                  <div className="h-full bg-[#000080]" style={{ width: `${calibrationProgress}%` }}></div>
                 </div>
-                <p className="text-xs font-comic text-[#800080] font-bold">
-                  (Notice how the entire box is tilted 7 degrees to disorient your cursor!)
-                </p>
+                <div className="text-[9px] text-gray-600 font-mono text-center">
+                  Adjusting focal photodiode sensitivity ({calibrationProgress}%)...
+                </div>
               </div>
+            )}
+
+            {!sensorCalibrated && !isCalibrating && (
+              <button
+                type="button"
+                onClick={calibrateSensor}
+                className="w-full win-btn !py-1 text-[11px] font-bold text-blue-900"
+              >
+                Execute Mandatory Sensor Array Calibration
+              </button>
             )}
           </div>
 
-          {/* Sample Preset Selector */}
-          <div>
-            <label className="block text-xs font-black font-comic text-black uppercase mb-2">
-              2. OR SELECT A PRESET DISEASED CROP SAMPLE:
+          {/* Optical Chamber / File Loader */}
+          <div className="space-y-1">
+            <label className="block text-[10px] font-bold text-gray-700">
+              Photographic Foliage Specimen (Adaxial / Abaxial Surface):
             </label>
-            <div className="grid grid-cols-2 gap-2">
-              {SAMPLE_LEAVES.map((sample, idx) => (
+            <div className="win-sunken bg-white p-3 text-center border border-gray-400 relative">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                disabled={!sensorCalibrated}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+              />
+              {uploadedImage ? (
+                <div className="space-y-1">
+                  <img
+                    src={uploadedImage}
+                    alt="Loaded specimen"
+                    className="max-h-36 mx-auto border border-gray-400 p-0.5 bg-gray-100"
+                  />
+                  <div className="text-[10px] font-mono text-green-800 font-bold">
+                    SPECIMEN REGISTERED IN OPTICAL TRAY
+                  </div>
+                  <div className="text-[9px] text-gray-500">
+                    Click to replace specimen image
+                  </div>
+                </div>
+              ) : (
+                <div className="py-4 space-y-1 text-gray-500">
+                  <div className="text-2xl">📷</div>
+                  <div className="font-bold text-[11px]">
+                    {!sensorCalibrated ? "(Calibrate sensor above to unlock specimen tray)" : "Insert Foliage Image File (or Click to Browse)"}
+                  </div>
+                  <div className="text-[10px]">Standard JPEG, PNG or TIFF</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Standard Presets */}
+          <div>
+            <label className="block text-[10px] font-bold text-gray-700 mb-1">
+              Or Select Reference Certified Sample Specimen:
+            </label>
+            <div className="space-y-1">
+              {SPECIMENS.map((spec, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => {
-                    sounds.playWhoosh();
-                    setSelectedSample(sample);
-                    setCustomSymptom(sample.symptoms);
+                    setSelectedSpecimen(spec);
+                    setCustomSymptom(spec.symptoms);
                   }}
-                  className={`p-3 text-left border-3 border-black text-xs font-comic font-bold transition-all ${
-                    selectedSample.name === sample.name
-                      ? 'bg-[#00FF00] shadow-[4px_4px_0px_#FF007F] scale-102'
-                      : 'bg-white hover:bg-yellow-200'
+                  className={`w-full text-left p-1.5 border text-[10px] transition-colors ${
+                    selectedSpecimen.name === spec.name
+                      ? 'bg-[#000080] text-white border-black font-bold'
+                      : 'bg-white hover:bg-gray-100 border-gray-300 text-gray-800'
                   }`}
                 >
-                  <div className="text-base mb-1">{sample.icon} {sample.name}</div>
-                  <div className="text-[10px] text-gray-600 font-times italic truncate">
-                    {sample.crop}
+                  <div>{spec.name}</div>
+                  <div className={`text-[9px] ${selectedSpecimen.name === spec.name ? 'text-gray-200' : 'text-gray-500'}`}>
+                    Crop: {spec.crop}
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Symptom Description Textarea */}
+          {/* Symptom Override */}
           <div>
-            <label className="block text-xs font-black font-comic text-black uppercase mb-1">
-              3. LEAF SYMPTOM SPECIFICATION:
+            <label className="block text-[10px] font-bold text-gray-700 mb-0.5">
+              Microscopic Morphological Notes:
             </label>
             <textarea
               rows={3}
-              value={customSymptom || selectedSample.symptoms}
+              value={customSymptom || selectedSpecimen.symptoms}
               onChange={(e) => setCustomSymptom(e.target.value)}
-              className="w-full p-3 bg-yellow-50 border-4 border-black font-mono text-xs focus:bg-pink-100 focus:outline-none"
+              className="w-full text-[11px] p-1.5"
             />
           </div>
 
-          {/* Submit Action with Confirmation Trap */}
-          <button
-            type="button"
-            onClick={handlePreAnalyze}
-            disabled={loading}
-            className="w-full py-4 bg-[#FF007F] hover:bg-[#00FF00] hover:text-black text-white font-impact text-xl uppercase tracking-wider border-4 border-black shadow-[6px_6px_0px_#000] active:translate-x-1 active:translate-y-1 transition-colors"
-          >
-            {loading ? '⏳ RUNNING PATHOLOGICAL SCAN...' : '🔬 COMMENCE LEAF PATHOLOGY DIAGNOSIS'}
-          </button>
-
+          <div className="pt-2 flex justify-end">
+            <button
+              type="button"
+              disabled={isAnalyzing || !sensorCalibrated}
+              onClick={handlePreAnalyze}
+              className="win-btn font-bold !px-5 !py-1 text-xs disabled:opacity-50"
+            >
+              {isAnalyzing ? "Processing Spectral Scan..." : "Initiate Pathology Analytical Scan →"}
+            </button>
+          </div>
         </div>
 
-        {/* Right Column: Diagnostic Intelligence Result */}
-        <div className="bg-[#E6FFE6] border-6 border-[#00FF00] p-6 shadow-[10px_10px_0px_#FF007F] tilt-left flex flex-col justify-between">
-          
-          <div>
-            <div className="border-b-4 border-black pb-3 flex items-center justify-between">
-              <h2 className="text-xl font-black font-impact text-black uppercase flex items-center gap-2">
-                <Bug className="w-6 h-6 text-purple-700 animate-spin" />
-                PATHOLOGY LAB RESULTS
-              </h2>
-              <span className="text-[10px] font-retro bg-black text-[#00FF00] px-2 py-1">
-                AI SENSOR READY
-              </span>
+        {/* Right Column: Phytopathological Findings (7 cols) */}
+        <div className="lg:col-span-7 win-window p-3 space-y-3">
+          <div className="win-titlebar">
+            <span>Phytopathological Analytical Finding Dossier</span>
+            <span className="text-[10px] font-mono">LAB-REF: #AG-904</span>
+          </div>
+
+          {isAnalyzing && (
+            <div className="p-8 text-center win-sunken bg-white space-y-3">
+              <div className="text-xl">🔬</div>
+              <div className="font-bold text-xs text-[#000080]">
+                Computing Spectral Pathology & Chlorosis Index...
+              </div>
+              <div className="text-[10px] text-gray-500">
+                Evaluating cellular necrosis against USDA phytosanitary fungal and vector databases...
+              </div>
             </div>
+          )}
 
-            {loading && (
-              <div className="py-24 text-center space-y-4">
-                <div className="inline-block p-6 bg-yellow-300 border-4 border-black animate-violent-shake">
-                  <Skull className="w-16 h-16 text-red-600 animate-fast-spin mx-auto" />
+          {!isAnalyzing && !diagnosticResult && (
+            <div className="p-12 text-center win-sunken bg-white space-y-2 text-gray-500">
+              <div className="text-3xl">🔬</div>
+              <div className="font-bold text-xs">CHAMBER IDLE</div>
+              <div className="text-[11px] max-w-sm mx-auto">
+                Calibrate the sensor, load a leaf specimen or select a reference sample on the left, then click Initiate Scan.
+              </div>
+            </div>
+          )}
+
+          {!isAnalyzing && diagnosticResult && (
+            <div className="win-sunken bg-white p-4 space-y-3 text-[11px] select-text">
+              
+              <div className="border-b-2 border-black pb-2 flex justify-between items-start">
+                <div>
+                  <div className="text-[9px] font-mono text-gray-500">
+                    SPECTRAL PATHOLOGY LABORATORY • TEST REPORT 904-B
+                  </div>
+                  <h2 className="text-sm font-bold text-[#000080] uppercase mt-0.5">
+                    Pathological Determination & Bio-Assay
+                  </h2>
                 </div>
-                <div className="font-black text-2xl font-impact text-red-600 blink-classic">
-                  ANALYZING CELLULAR NECROSIS & SPORES...
+                <div className="text-right">
+                  <span className={`px-2 py-0.5 font-bold font-mono text-xs border ${
+                    diagnosticResult.urgency === 'CRITICAL' ? 'bg-red-100 text-red-900 border-red-600' :
+                    diagnosticResult.urgency === 'HIGH' ? 'bg-orange-100 text-orange-900 border-orange-600' :
+                    'bg-yellow-100 text-yellow-900 border-yellow-600'
+                  }`}>
+                    {diagnosticResult.urgency} URGENCY
+                  </span>
                 </div>
-                <p className="font-comic text-xs text-gray-800">
-                  Cross-referencing global phytopathology databases and spectral chlorosis indices...
+              </div>
+
+              {/* Detected Pathology */}
+              <div className="bg-[#f7f6f2] p-2.5 border border-gray-300">
+                <span className="text-[10px] text-gray-500 font-bold uppercase block">
+                  Identified Pathogen / Abiotic Stressor:
+                </span>
+                <div className="text-base font-bold text-red-900 font-sans">
+                  {diagnosticResult.detected_issue}
+                </div>
+                <div className="text-[10px] text-gray-600 font-mono mt-0.5">
+                  Confidence Metric: {(diagnosticResult.confidence * 100).toFixed(1)}% | Host: {diagnosticResult.crop_type}
+                </div>
+                <p className="mt-1 text-gray-700 italic text-[11px]">
+                  {diagnosticResult.summary}
                 </p>
               </div>
-            )}
 
-            {!loading && !diagnosticResult && (
-              <div className="py-20 text-center space-y-4">
-                <div className="text-6xl animate-bounce">🔬</div>
-                <div className="font-impact text-xl text-gray-700 uppercase">
-                  DROP LEAF OR SELECT SAMPLE TO DIAGNOSE
+              {/* Immediate Threat */}
+              {diagnosticResult.immediate_threat && (
+                <div className="p-2 bg-[#fff3cd] border border-[#ffeeba] text-[#856404]">
+                  <strong className="block text-[10px] uppercase font-bold text-red-800">
+                    ⚠️ Physiological Impact Timeline:
+                  </strong>
+                  {diagnosticResult.immediate_threat}
                 </div>
-                <p className="font-comic text-xs text-gray-600 max-w-sm mx-auto">
-                  Our system evaluates leaf spots, wilting, powdery mildew, and aphid damage with high precision.
-                </p>
-              </div>
-            )}
+              )}
 
-            {!loading && diagnosticResult && (
-              <div className="mt-4 space-y-4">
-                
-                {/* Detected Issue Banner */}
-                <div className="p-4 bg-white border-4 border-black shadow-[6px_6px_0px_#000]">
-                  <div className="flex justify-between items-start gap-2">
-                    <div>
-                      <span className="text-[10px] font-retro bg-red-600 text-white px-2 py-0.5">
-                        PATHOGEN / DEFICIENCY DETECTED
-                      </span>
-                      <h3 className="text-2xl font-black font-impact text-red-600 blink-classic mt-1">
-                        🚨 {diagnosticResult.detected_issue}
-                      </h3>
+              {/* Prescribed Recovery Protocol */}
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-gray-800 uppercase block">
+                  Mandatory Interventional Protocol:
+                </span>
+                <div className="space-y-1">
+                  {(diagnosticResult.treatment_steps || []).map((step, idx) => (
+                    <div key={idx} className="p-1.5 bg-gray-50 border border-gray-300 flex items-start gap-2">
+                      <span className="font-mono font-bold text-[#000080]">{idx + 1}.</span>
+                      <span className="leading-snug">{step}</span>
                     </div>
-
-                    <span className={`text-xs font-retro px-3 py-1 border-2 border-black ${
-                      diagnosticResult.urgency === 'CRITICAL' ? 'bg-red-600 text-white animate-pulse' :
-                      diagnosticResult.urgency === 'HIGH' ? 'bg-orange-500 text-white' : 'bg-yellow-400 text-black'
-                    }`}>
-                      {diagnosticResult.urgency} URGENCY
-                    </span>
-                  </div>
-
-                  <p className="mt-2 text-xs font-comic text-gray-800 font-bold bg-yellow-100 p-2 border border-black">
-                    {diagnosticResult.summary}
-                  </p>
+                  ))}
                 </div>
+              </div>
 
-                {/* Immediate Threat */}
-                {diagnosticResult.immediate_threat && (
-                  <div className="p-3 bg-red-100 border-4 border-red-700 text-red-900 font-comic text-xs">
-                    <span className="font-black font-impact text-sm block">⚠️ PATHOLOGY ALERT:</span>
-                    {diagnosticResult.immediate_threat}
-                  </div>
-                )}
-
-                {/* Treatment Steps */}
-                <div className="p-4 bg-yellow-100 border-4 border-black shadow-[4px_4px_0px_#000]">
-                  <h4 className="font-black font-impact text-sm text-black uppercase mb-2">
-                    💉 EMERGENCY CROP INTERVENTION:
-                  </h4>
-                  <ul className="space-y-1.5 text-xs font-mono">
-                    {(diagnosticResult.treatment_steps || []).map((step, idx) => (
-                      <li key={idx} className="flex items-start gap-2 bg-white p-2 border border-black">
-                        <CheckCircle className="w-4 h-4 text-green-700 flex-shrink-0 mt-0.5" />
-                        <span>{step}</span>
-                      </li>
+              {/* Treatments */}
+              {diagnosticResult.treatments?.length > 0 && (
+                <div className="p-2 bg-gray-50 border border-gray-300">
+                  <strong className="text-[10px] uppercase text-gray-700 block mb-1">
+                    Accredited Chemical & Bio-Fungicide Options:
+                  </strong>
+                  <ul className="list-disc list-inside space-y-0.5 text-[10px] text-gray-800">
+                    {diagnosticResult.treatments.map((t, idx) => (
+                      <li key={idx}>{t}</li>
                     ))}
                   </ul>
                 </div>
+              )}
 
-                {/* Treatments */}
-                {diagnosticResult.treatments?.length > 0 && (
-                  <div className="p-3 bg-cyan-100 border-2 border-black text-xs">
-                    <strong className="font-impact text-cyan-900 block mb-1">
-                      RECOMMENDED SPRAYS / FERTIGATION:
-                    </strong>
-                    <ul className="list-disc list-inside font-comic text-[11px] space-y-1">
-                      {diagnosticResult.treatments.map((t, idx) => (
-                        <li key={idx}>{t}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
+              <div className="pt-2 border-t border-gray-300 flex justify-between items-center text-[10px] text-gray-500 font-mono">
+                <span>Verification Hash: {Math.random().toString(36).substring(2, 10).toUpperCase()}</span>
+                <button
+                  type="button"
+                  onClick={() => alert("Diagnostic assay printed to physical ledger.")}
+                  className="win-btn !p-0.5 !px-2 text-[10px]"
+                >
+                  Print Lab Assay
+                </button>
               </div>
-            )}
-          </div>
 
-          <div className="mt-6 pt-4 border-t-2 border-black flex justify-between items-center text-xs font-comic">
-            <span>Leaf Diagnostics v3.1</span>
-            <button
-              onClick={() => fireObnoxiousConfetti()}
-              className="text-[10px] font-retro text-purple-900 underline"
-            >
-              🎉 Confetti Blast
-            </button>
-          </div>
+            </div>
+          )}
 
         </div>
 
-      </section>
+      </div>
 
-      {/* Confirmation Modal */}
-      <AnnoyingModal
+      {/* Regulatory Waiver Modal */}
+      <RegulatoryDisclaimerModal
         isOpen={modalOpen}
-        title="⚠️ SPREAD PATHOLOGY TO AI SENSORS?"
-        message="Are you certain you wish to upload this diseased leaf to the AI Agronomist? The digital spores may infect your browser tab!"
         onConfirm={executeAnalysis}
         onCancel={() => setModalOpen(false)}
-        confirmText="YES, INFECT WITH SPORES"
-        cancelText="CANCEL & CELEBRATE"
+        title="STATUTORY INDEMNITY CERTIFICATION (FORM 704-B)"
       />
 
     </div>

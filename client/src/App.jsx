@@ -1,31 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import BadNavbar from './components/BadNavbar';
+import BartholomewAuditor from './components/BartholomewAuditor';
+import SessionTimeoutModal from './components/SessionTimeoutModal';
 import Home from './pages/Home';
 import Farms from './pages/Farms';
 import Advisory from './pages/Advisory';
 import Diagnostics from './pages/Diagnostics';
-import { fireObnoxiousConfetti } from './components/ConfettiBomb';
-import { sounds } from './components/SoundEffects';
 
 export default function App() {
-  const [clickCount, setClickCount] = useState(0);
-
-  const handleRandomChaoticClick = () => {
-    setClickCount(prev => prev + 1);
-    if ((clickCount + 1) % 7 === 0) {
-      fireObnoxiousConfetti();
-    }
-  };
-
   return (
-    <div 
-      onClick={handleRandomChaoticClick}
-      className="min-h-screen bg-[#FFFF00] flex flex-col justify-between selection:bg-[#FF007F] selection:text-[#00FF00]"
-    >
+    <div className="min-h-screen flex flex-col justify-between text-black">
+      {/* Top Enterprise Application Frame */}
       <div>
         <BadNavbar />
-        <main>
+        <main className="py-2">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/farms" element={<Farms />} />
@@ -36,41 +25,34 @@ export default function App() {
         </main>
       </div>
 
-      {/* Obnoxious Footer */}
-      <footer className="bg-black text-[#00FF00] border-t-8 border-[#FF007F] p-6 font-mono text-xs select-none">
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
-          <div>
-            <div className="font-impact text-lg text-[#FFFF00] tracking-wider">
-              🌽 AGRO-CHAOS PRECISION AGRICULTURE ASSISTANT © 2026-3000
-            </div>
-            <p className="font-comic text-[11px] text-[#FFB6C1] mt-1">
-              Engineered with extreme malice by the Worst UI Society. Powered by Supabase & Google GenAI SDK.
-            </p>
-          </div>
+      {/* Obnoxious Bureaucratic Floating Auditor & Session Monitors */}
+      <BartholomewAuditor />
+      <SessionTimeoutModal />
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => {
-                sounds.playBuzzer();
-                alert("🚨 BEEP BOOP! You clicked the useless sound button. Your ears are now conditioned for farm labor.");
-              }}
-              className="px-3 py-1 bg-[#FF007F] text-white font-black uppercase text-[10px] border border-white hover:bg-white hover:text-black"
-            >
-              🔊 TEST LOUD BUZZER
-            </button>
-
-            <button
-              onClick={() => fireObnoxiousConfetti()}
-              className="px-3 py-1 bg-[#00FF00] text-black font-black uppercase text-[10px] border border-black hover:bg-yellow-300"
-            >
-              🎉 GRATUITOUS CONFETTI
-            </button>
+      {/* Classic Enterprise 1999 Status Bar */}
+      <footer className="bg-[#d4d0c8] border-t-2 border-[#ffffff] border-b border-[#404040] px-2 py-0.5 text-[11px] text-gray-800 select-none flex items-center justify-between font-sans">
+        <div className="flex items-center gap-3">
+          <div className="win-sunken px-2 py-0.5 text-[10px] bg-white font-mono">
+            READY
           </div>
+          <span className="text-[10px] text-gray-600">
+            AGRO-SYS v8.4.1 (Build 2026.09.30) • USDA Precision Agronomy Compliance Division
+          </span>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-gray-800 text-[10px] text-gray-500 font-times italic flex flex-wrap justify-between">
-          <span>Disclaimer: Not responsible for spontaneous corn pollination or tractor software mutinies.</span>
-          <span>Designed to cause moderate psychological bewilderment.</span>
+        <div className="flex items-center gap-1">
+          <div className="win-sunken px-2 py-0.5 text-[10px] font-mono bg-[#ece9d8]">
+            DB: SUPABASE-PG
+          </div>
+          <div className="win-sunken px-2 py-0.5 text-[10px] font-mono bg-[#ece9d8]">
+            AI: @google/genai
+          </div>
+          <div className="win-sunken px-2 py-0.5 text-[10px] font-mono bg-[#ece9d8]">
+            AUDIT: LVL-3
+          </div>
+          <div className="win-sunken px-2 py-0.5 text-[10px] font-mono bg-[#ece9d8]">
+            CAPS | NUM
+          </div>
         </div>
       </footer>
     </div>
