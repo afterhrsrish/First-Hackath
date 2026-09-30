@@ -10,10 +10,14 @@ import Farms from './pages/Farms';
 import Advisory from './pages/Advisory';
 import Diagnostics from './pages/Diagnostics';
 import PassiveAggressiveBanner from './components/PassiveAggressiveBanner';
+import NightmareEngine from './components/NightmareEngine';
 
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col justify-between text-black">
+      {/* Nightmare Sensory Overload & Assault Engine */}
+      <NightmareEngine />
+
       {/* Top Enterprise Application Frame */}
       <div>
         <BadNavbar />
