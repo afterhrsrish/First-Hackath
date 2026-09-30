@@ -1,0 +1,19 @@
+{
+  "name": "agro-chaos-assistant-monorepo",
+  "version": "1.0.0",
+  "description": "AI-Powered Agriculture Crop Advisory Assistant (Worst UI Design Edition)",
+  "scripts": {
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "migrate": "npm run migrate --prefix server"
+  },
+  "keywords": [
+    "agriculture",
+    "gemini",
+    "supabase",
+    "chaotic-ui",
+    "worst-ui-anti-patterns"
+  ],
+  "author": "Antigravity Lead Architect & Chaotic Frontend Designer",
+  "license": "MIT"
+}

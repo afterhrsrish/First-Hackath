@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Universal Chaos Reset */
+* {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewport='0 0 28 28' style='fill:black;font-size:20px;'><text y='20'>🚜</text></svg>"), help !important;
+}
+
+button:hover, a:hover {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewport='0 0 28 28' style='fill:black;font-size:20px;'><text y='20'>💥</text></svg>"), crosshair !important;
+}
+
+/* 90s Geocities & Hostile Windows 95 aesthetic */
+.brutal-border {
+  border: 6px ridge #FF007F;
+  box-shadow: 8px 8px 0px #000000, -5px -5px 0px #00FF00;
+}
+
+.brutal-border-green {
+  border: 5px outset #00FF00;
+  box-shadow: 6px 6px 0px #FF007F;
+}
+
+.brutal-border-yellow {
+  border: 4px dashed #FFFF00;
+  box-shadow: inset 3px 3px 0px #00FFFF, 5px 5px 0px #000;
+}
+
+/* Low contrast troll styling */
+.low-contrast-trap {
+  background-color: #FFF2B2;
+  color: #FFFFFF;
+  text-shadow: 0 0 1px #FFE082;
+}
+
+.low-contrast-white-on-pink {
+  background-color: #FFB6C1;
+  color: #FFF0F5;
+}
+
+/* Clashing font mixture */
+.ransom-font-1 {
+  font-family: 'Comic Neue', 'Comic Sans MS', cursive;
+  font-weight: 700;
+}
+.ransom-font-2 {
+  font-family: Papyrus, fantasy;
+}
+.ransom-font-3 {
+  font-family: Impact, sans-serif;
+  letter-spacing: 2px;
+}
+.ransom-font-4 {
+  font-family: 'Times New Roman', serif;
+  font-style: italic;
+}
+.ransom-font-5 {
+  font-family: 'Rubik Glitch', cursive;
+}
+.ransom-font-6 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+}
+
+/* Scrolling marquee continuous */
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 12s linear infinite;
+}
+
+.animate-marquee-fast {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 6s linear infinite;
+}
+
+/* Blinking text */
+@keyframes classic-blink {
+  0%, 49% { visibility: visible; }
+  50%, 100% { visibility: hidden; }
+}
+
+.blink-classic {
+  animation: classic-blink 0.8s infinite;
+}
+
+/* Diagonal stripe background pattern */
+.hazard-stripes {
+  background: repeating-linear-gradient(
+    45deg,
+    #FFFF00,
+    #FFFF00 15px,
+    #000000 15px,
+    #000000 30px
+  );
+}
+
+.pink-green-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    #FF007F,
+    #FF007F 20px,
+    #00FF00 20px,
+    #00FF00 40px
+  );
+}
+
+/* Chaotic tilt utilities */
+.tilt-left {
+  transform: rotate(-2.5deg);
+}
+.tilt-right {
+  transform: rotate(3deg);
+}
+.tilt-extreme {
+  transform: rotate(7deg) skew(-4deg);
+}
+
+/* Range slider thumb styling for the 0-3000 year slider */
+input[type=range].chaotic-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FF007F;
+  border: 4px solid #00FF00;
+  cursor: grab;
+}
+input[type=range].chaotic-slider::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FF007F;
+  border: 4px solid #00FF00;
+  cursor: grab;
+}
