@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import MicroStepperAreaInput from '../components/MicroStepperAreaInput';
 import TaxonomicCropSelector from '../components/TaxonomicCropSelector';
+import RandomizedCountySelector from '../components/RandomizedCountySelector';
 import RegulatoryDisclaimerModal from '../components/RegulatoryDisclaimerModal';
 import CascadeConfirmationModal from '../components/CascadeConfirmationModal';
+import { sounds } from '../components/SoundEffects';
 
 export default function Farms() {
   const [farms, setFarms] = useState([]);
@@ -15,8 +17,9 @@ export default function Farms() {
   // New Farm State
   const [farmerName, setFarmerName] = useState('');
   const [farmName, setFarmName] = useState('');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState('Lubbock County, TX (Zone 7b)');
   const [totalArea, setTotalArea] = useState(35.5);
+  const [areaVerified, setAreaVerified] = useState(false);
   const [parcelPin, setParcelPin] = useState('US-AG-9021');
 
   // New Plot State
@@ -32,6 +35,24 @@ export default function Farms() {
   const [pendingAction, setPendingAction] = useState(null);
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // CRUEL INVISIBLE 30-SECOND FORM WIPEOUT TIMER!
+  useEffect(() => {
+    let timeoutId;
+    if (farmerName.trim().length > 0 || farmName.trim().length > 0 || plotName.trim().length > 0) {
+      timeoutId = setTimeout(() => {
+        sounds.playBuzzer();
+        setFarmerName('');
+        setFarmName('');
+        setPlotName('');
+        setStatusMessage({
+          type: 'error',
+          text: '🚨 30-SECOND CADENCE PURGE: Form inputs wiped back to blank due to sluggish typing (Rule § 409-F). Retype with statutory urgency!'
+        });
+      }, 30000);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [farmerName, farmName, plotName]);
 
   useEffect(() => {
     fetchFarms();
@@ -276,34 +297,35 @@ export default function Farms() {
                 />
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold text-gray-700 mb-0.5">
-                  Geographical Jurisdiction / County & State
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g., Clay County, MN (Zone 4b)"
-                  className="w-full text-[11px]"
-                />
-              </div>
+              {/* Randomized County Selector that scrambles order on click */}
+              <RandomizedCountySelector
+                value={location}
+                onChange={(val) => setLocation(val)}
+                label="Geographical Jurisdiction / Cadastral County"
+              />
 
-              {/* The Precision Micro-Stepper Number Input */}
+              {/* The Precision Micro-Stepper Number Input (Typing Banned, Re-verification required) */}
               <MicroStepperAreaInput
                 value={totalArea}
                 onChange={(val) => setTotalArea(val)}
-                label="Statutory Area (Mandatory Metric Stepper)"
+                onVerificationChange={(v) => setAreaVerified(v)}
+                label="Statutory Area (Mandatory Metric Stepper - Direct Typing Banned)"
               />
 
               <div className="pt-2 flex justify-end">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="win-btn font-bold !px-5 !py-1 text-xs"
+                  disabled={isSubmitting || !areaVerified}
+                  className={`win-btn font-bold !px-5 !py-1 text-xs ${
+                    !areaVerified ? 'opacity-60 cursor-not-allowed !bg-red-100 text-red-900' : ''
+                  }`}
+                  title={!areaVerified ? "You must click 'Re-Verify Conversion (Required)' above" : "Commit record"}
                 >
-                  {isSubmitting ? "Persisting to Supabase..." : "Commit Parcel Record to PostgreSQL →"}
+                  {isSubmitting
+                    ? "Persisting to Supabase..."
+                    : !areaVerified
+                    ? "⚠️ LOCKED: RE-VERIFY ACREAGE FIRST"
+                    : "Commit Parcel Record to PostgreSQL →"}
                 </button>
               </div>
             </form>
@@ -428,6 +450,27 @@ export default function Farms() {
                 <span className="font-bold font-mono">
                   RECORD {currentPage + 1} OF {farms.length}
                 </span>
+
+                {/* Destructive Action Placement: High-risk instant purge without confirmation right next to Next button! */}
+                {currentFarm && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      sounds.playBuzzer();
+                      const farmToPurge = currentFarm;
+                      await fetch(`/api/farms/${farmToPurge.id}`, { method: 'DELETE' });
+                      setStatusMessage({
+                        type: 'error',
+                        text: `💥 IMMEDIATE CATASTROPHIC PURGE: Holding "${farmToPurge.farm_name}" eradicated without safety prompt.`
+                      });
+                      fetchFarms();
+                    }}
+                    className="win-btn !p-1 text-[9px] !bg-red-800 text-white font-bold hover:!bg-black border border-black shadow"
+                    title="Warning: Instant deletion without confirmation prompt"
+                  >
+                    💀 Instant Purge (No Confirm)
+                  </button>
+                )}
 
                 <div className="flex gap-1">
                   <button

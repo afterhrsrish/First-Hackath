@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import HostileDoNotClickButton from './HostileDoNotClickButton';
+import GovernmentAuthModal from './GovernmentAuthModal';
 
 export default function BadNavbar() {
   const [activeMenu, setActiveMenu] = useState(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isClearanceVerified, setIsClearanceVerified] = useState(false);
   const location = useLocation();
 
   const handleMenuClick = (menuName) => {
@@ -116,7 +119,16 @@ export default function BadNavbar() {
           )}
         </div>
 
-        <div className="ml-auto flex items-center gap-2 pr-2 text-[10px] text-gray-700">
+        <div className="ml-auto flex items-center gap-1.5 pr-2 text-[10px] text-gray-700">
+          <button
+            type="button"
+            onClick={() => setAuthModalOpen(true)}
+            className={`win-btn !p-0.5 !px-1.5 text-[9px] font-mono font-bold ${
+              isClearanceVerified ? '!bg-green-100 text-green-900 border-green-700' : '!bg-yellow-100 text-red-900 border-red-700 animate-pulse'
+            }`}
+          >
+            🔑 {isClearanceVerified ? 'CLEARANCE: LVL-4' : 'CLEARANCE: UNVERIFIED'}
+          </button>
           <HostileDoNotClickButton />
           <span className="font-mono hidden sm:inline">DB: SUPABASE-PG</span>
           <span className="font-mono hidden sm:inline">AI: GEMINI-PRO</span>
@@ -174,6 +186,13 @@ export default function BadNavbar() {
           <span>Spectral Pathology Lab</span>
         </NavLink>
       </div>
+
+      {/* Classified Government Operator Authentication Gateway */}
+      <GovernmentAuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onAuthenticated={() => setIsClearanceVerified(true)}
+      />
     </header>
   );
 }

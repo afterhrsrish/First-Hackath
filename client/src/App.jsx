@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Farms from './pages/Farms';
 import Advisory from './pages/Advisory';
 import Diagnostics from './pages/Diagnostics';
+import PassiveAggressiveBanner from './components/PassiveAggressiveBanner';
 
 export default function App() {
   return (
@@ -16,6 +17,8 @@ export default function App() {
       {/* Top Enterprise Application Frame */}
       <div>
         <BadNavbar />
+        {/* Passive-Aggressive Condescending Status & Mouse Velocity Banner */}
+        <PassiveAggressiveBanner />
         <main className="py-2">
           <Routes>
             <Route path="/" element={<Home />} />
