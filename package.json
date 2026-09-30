@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "AI-Powered Agriculture Crop Advisory Assistant (Worst UI Design Edition)",
   "scripts": {
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "start": "npm run start --prefix server",
     "dev:server": "npm run dev --prefix server",
     "dev:client": "npm run dev --prefix client",
     "migrate": "npm run migrate --prefix server"
