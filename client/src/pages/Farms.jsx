@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MicroStepperAreaInput from '../components/MicroStepperAreaInput';
 import TaxonomicCropSelector from '../components/TaxonomicCropSelector';
 import RegulatoryDisclaimerModal from '../components/RegulatoryDisclaimerModal';
+import CascadeConfirmationModal from '../components/CascadeConfirmationModal';
 
 export default function Farms() {
   const [farms, setFarms] = useState([]);
@@ -26,6 +27,8 @@ export default function Farms() {
 
   // Modal & Notification
   const [modalOpen, setModalOpen] = useState(false);
+  const [cascadeOpen, setCascadeOpen] = useState(false);
+  const [cascadeActionName, setCascadeActionName] = useState('commit this parcel record');
   const [pendingAction, setPendingAction] = useState(null);
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,8 +61,14 @@ export default function Farms() {
       setStatusMessage({ type: 'error', text: 'ERROR: All statutory identity fields must be fully completed pursuant to Form 104.' });
       return;
     }
+    setCascadeActionName(`persist farm "${farmName}" into PostgreSQL`);
     setPendingAction(() => executeFarmCreation);
     setModalOpen(true);
+  };
+
+  const handleDisclaimerAccepted = () => {
+    setModalOpen(false);
+    setCascadeOpen(true);
   };
 
   const executeFarmCreation = async () => {
@@ -105,6 +114,7 @@ export default function Farms() {
       setStatusMessage({ type: 'error', text: 'ERROR: You must assign a plot identifier and link to a verified holding.' });
       return;
     }
+    setCascadeActionName(`sow plot "${plotName}" into field holding`);
     setPendingAction(() => executePlotCreation);
     setModalOpen(true);
   };
@@ -513,12 +523,23 @@ export default function Farms() {
 
       </div>
 
-      {/* Regulatory Waiver Modal */}
+      {/* 1. Mandatory Statutory Legal Disclaimer Modal (Scroll-to-bottom trap) */}
       <RegulatoryDisclaimerModal
         isOpen={modalOpen}
-        onConfirm={pendingAction || (() => setModalOpen(false))}
+        onConfirm={handleDisclaimerAccepted}
         onCancel={() => setModalOpen(false)}
         title="STATUTORY INDEMNITY CERTIFICATION (FORM 704-B)"
+      />
+
+      {/* 2. Cascading 3-Tier Security Confirmation Interlock (with 'DO NOT CLICK' inverted button) */}
+      <CascadeConfirmationModal
+        isOpen={cascadeOpen}
+        actionName={cascadeActionName}
+        onFinalConfirm={() => {
+          setCascadeOpen(false);
+          if (pendingAction) pendingAction();
+        }}
+        onCancel={() => setCascadeOpen(false)}
       />
 
     </div>

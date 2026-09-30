@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import BadNavbar from './components/BadNavbar';
 import BartholomewAuditor from './components/BartholomewAuditor';
 import SessionTimeoutModal from './components/SessionTimeoutModal';
+import TipOfTheDayModal from './components/TipOfTheDayModal';
+import NitrogenConsentBanner from './components/NitrogenConsentBanner';
 import Home from './pages/Home';
 import Farms from './pages/Farms';
 import Advisory from './pages/Advisory';
@@ -28,6 +30,10 @@ export default function App() {
       {/* Obnoxious Bureaucratic Floating Auditor & Session Monitors */}
       <BartholomewAuditor />
       <SessionTimeoutModal />
+      <TipOfTheDayModal />
+
+      {/* Mandatory Regulatory Data Consent Banner */}
+      <NitrogenConsentBanner />
 
       {/* Classic Enterprise 1999 Status Bar */}
       <footer className="bg-[#d4d0c8] border-t-2 border-[#ffffff] border-b border-[#404040] px-2 py-0.5 text-[11px] text-gray-800 select-none flex items-center justify-between font-sans">

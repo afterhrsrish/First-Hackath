@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import RegulatoryDisclaimerModal from '../components/RegulatoryDisclaimerModal';
+import CascadeConfirmationModal from '../components/CascadeConfirmationModal';
 
 const COMMON_CROP_LIST = [
   'Corn (Maize)',
@@ -27,8 +28,9 @@ export default function Advisory() {
   const [advisoryResult, setAdvisoryResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Regulatory waiver modal
+  // Regulatory waiver & cascade modal
   const [modalOpen, setModalOpen] = useState(false);
+  const [cascadeOpen, setCascadeOpen] = useState(false);
 
   useEffect(() => {
     fetchPlots();
@@ -415,12 +417,26 @@ export default function Advisory() {
 
       </div>
 
-      {/* Regulatory Waiver Modal */}
+      {/* 1. Mandatory Statutory Legal Disclaimer Modal (Scroll-to-bottom trap) */}
       <RegulatoryDisclaimerModal
         isOpen={modalOpen}
-        onConfirm={executeAdvisoryGeneration}
+        onConfirm={() => {
+          setModalOpen(false);
+          setCascadeOpen(true);
+        }}
         onCancel={() => setModalOpen(false)}
         title="STATUTORY INDEMNITY CERTIFICATION (FORM 704-B)"
+      />
+
+      {/* 2. Cascading 3-Tier Security Confirmation Interlock (with 'DO NOT CLICK' inverted button) */}
+      <CascadeConfirmationModal
+        isOpen={cascadeOpen}
+        actionName={`invoke Gemini AI reasoning model for ${cropType}`}
+        onFinalConfirm={() => {
+          setCascadeOpen(false);
+          executeAdvisoryGeneration();
+        }}
+        onCancel={() => setCascadeOpen(false)}
       />
 
     </div>

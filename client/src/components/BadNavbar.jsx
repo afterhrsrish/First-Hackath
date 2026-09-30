@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
+import HostileDoNotClickButton from './HostileDoNotClickButton';
 
 export default function BadNavbar() {
   const [activeMenu, setActiveMenu] = useState(null);
@@ -115,9 +116,10 @@ export default function BadNavbar() {
           )}
         </div>
 
-        <div className="ml-auto flex items-center gap-3 pr-2 text-[10px] text-gray-700">
-          <span className="font-mono">DB: SUPABASE-POSTGRESQL (SSL)</span>
-          <span className="font-mono">AI: GEMINI-PRO (ONLINE)</span>
+        <div className="ml-auto flex items-center gap-2 pr-2 text-[10px] text-gray-700">
+          <HostileDoNotClickButton />
+          <span className="font-mono hidden sm:inline">DB: SUPABASE-PG</span>
+          <span className="font-mono hidden sm:inline">AI: GEMINI-PRO</span>
         </div>
       </div>
 
