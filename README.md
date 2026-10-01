@@ -1,112 +1,45 @@
-# 🌾 AGRO-CHAOS 3000™: AI Crop Advisory Assistant
-### *(Flawless Production Architecture paired with the Worst UI Design Anti-Patterns in Human History)*
+# FieldOps AI — Agentic farm incident response
 
-[![Built with React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61dafb.svg)](https://vitejs.dev/)
-[![Backend Express](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-green.svg)](https://expressjs.com/)
-[![Database Supabase](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ecf8e.svg)](https://supabase.com/)
-[![AI Google GenAI](https://img.shields.io/badge/AI-Google%20GenAI%20SDK-orange.svg)](https://ai.google.dev/)
-[![UI Accessibility Hostility](https://img.shields.io/badge/A11y-Hostile%20by%20Design-red.svg)](#)
+## Problem statement
+Farm teams receive field observations across calls, photos, and messages. A symptom can be reported without a shared priority, owner, or follow-up plan, delaying consistent action across the farm.
 
----
+## Solution
+FieldOps AI turns a field observation into a coordinated response. A workflow planner organizes the report, an agronomy specialist evaluates crop symptoms, and a risk and operations reviewer prioritizes actions and assigns them to field roles. The Express server returns the shared decision and dispatches a checklist saved to the advisory history. Gemini is called only from the backend when `GEMINI_API_KEY` is configured; otherwise the existing agronomy rule engine provides a clearly identified demo fallback.
 
-## 🌽 Overview
+## Agent workflow
+1. **Workflow planner** scopes the incident and prepares it for review.
+2. **Agronomy specialist** uses Gemini (or the fallback rule engine) to assess symptoms and draft actions.
+3. **Risk & operations** applies urgency, assigns owners, and dispatches a shared checklist.
+4. The application stores the incident and advisory in Supabase PostgreSQL (or in memory for a no-credentials demo).
 
-**AGRO-CHAOS 3000™** is an AI-powered agricultural advisory and farm management system. Beneath the hood, it features a **production-grade full-stack architecture** with real Supabase Cloud PostgreSQL persistence, Google Gemini AI structured generation via `@google/genai`, and strict Zod validation.
+## Stack
+React 18, Vite, React Router, Tailwind CSS, Node.js, Express, Zod, JWT, bcryptjs, Supabase PostgreSQL, Google Gemini API.
 
-However, the user interface was maliciously architected to violate every known UX/UI guideline, testing the limits of human patience, eye strain, and mouse dexterity.
+## Run locally
+1. Install Node.js 18 or newer.
+2. Copy `server/.env.example` to `server/.env`. Set a long random `JWT_SECRET`. Add Gemini and Supabase credentials if available. Gemini keys belong only in the server environment.
+3. Apply `supabase/migrations/001_initial_schema.sql` and then `supabase/migrations/002_app_users.sql` in the Supabase SQL editor. For a demo without Supabase, the app uses an in-memory store.
+4. In one terminal run `npm install --prefix server && npm run dev --prefix server`.
+5. In another run `npm install --prefix client && npm run dev --prefix client`.
+6. Open http://localhost:5173. The sample field incident is prefilled; select **Coordinate response** to show the collaborative run and action checklist.
 
----
+The API exposes `POST /api/auth/register` and `POST /api/auth/login`; passwords are hashed with bcryptjs and successful authentication returns a 12-hour JWT. Set `JWT_SECRET` on the backend. The UI demo can run without signing in.
 
-## 💥 Worst UI / Chaotic Anti-Patterns Included
+## Deploy
+- **Frontend:** Deploy the `client` folder to Vercel. Configure a rewrite/proxy so `/api/*` reaches the Express service.
+- **Backend:** Deploy `server` to Render or another Node host. Set `CLIENT_URL`, `JWT_SECRET`, `GEMINI_API_KEY`, `SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY` in the host's environment settings.
+- Health check: `/api/health`.
 
-1. **Hostile Navigation:**
-   - **Runaway Buttons:** Submit and Panic buttons that actively detect cursor proximity and dart across the screen with laser sound effects.
-   - **Misleading Nav Titles:**
-     - `"EVACUATE FARM"` ➡️ Home / Dashboard
-     - `"DELETE ALL HARVESTS"` ➡️ Farms & Field Management
-     - `"SOW NIGHTSHADE"` ➡️ Gemini AI Advisory
-     - `"SPREAD BLIGHT"` ➡️ Leaf Pathology Diagnostics
-2. **Aggressive & Eye-Straining Aesthetics:**
-   - Blinding neon palette: `#FFFF00` (Blinding Yellow), `#00FF00` (Toxic Green), `#FF007F` (Hot Pink), with low-contrast white text on pale yellow cards.
-   - Ransom-font typography combining **Comic Sans, Papyrus, Impact, and Times New Roman** within single sentences.
-   - Brutalist ridge and outset borders, spinning icons, tilted cards (-7° to +6°), and continuous news tickers.
-3. **Frustrating Form Inputs:**
-   - **Scrambled Dropdowns:** Crop species select that randomly rearranges itself alphabetically and semantically whenever focused or clicked.
-   - **Historical Year Slider (0 to 3000 AD):** Instead of a standard date picker, users must drag a slider through Ancient Rome, the Medieval Feudal era, the 1928 Dust Bowl, and the Cybernetic Corn epoch.
-   - **Forced ALL CAPS:** Punitive text inputs that scream at the user.
-   - **Bot Defense CAPTCHA:** Agricultural math and farming trivia challenges required before queries can be submitted to Gemini.
-4. **Obnoxious Feedback & Celebrations:**
-   - Confetti explosions triggered when clicking `"Cancel"`, dismissing warnings, or clicking random cards.
-   - Synthesized retro Web Audio buzzers, dings, and whooshes.
-   - Reverse-psychology confirmation modals (`"ABORT & CELEBRATE"` vs `"PROCEED TO DOOM"`).
+A public repo is available at https://github.com/afterhrsrish/First-Hackath. A live deployment and demo recording link should be added here after deployment/recording; neither is claimed by this repository yet.
 
----
+## Demo video outline (3–5 minutes)
+- 0:00–0:25 — Introduce the coordination gap: reports arrive, but decisions and owners are fragmented.
+- 0:25–0:55 — Enter the sample yellowing leaves incident and choose crop and growth stage.
+- 0:55–1:50 — Run the workflow and explain the planner, agronomy specialist, and risk/operations reviewer.
+- 1:50–2:40 — Show the urgency, shared diagnosis, confidence, and assigned action checklist; mark an action complete.
+- 2:40–3:15 — Show the backend health endpoint and explain Gemini server-side key handling, Supabase persistence, and the no-key fallback.
+- 3:15–3:30 — State the measured next step: connect field sensors and messaging integrations.
 
-## 🛠️ Tech Stack & Architecture
-
-- **Frontend:** React 18, Vite, Tailwind CSS, Lucide Icons, Canvas-Confetti, Web Audio API.
-- **Backend:** Node.js, Express.js, `@google/genai`, `@supabase/supabase-js`, Zod, pg, CORS, dotenv.
-- **Database:** Supabase PostgreSQL with Row Level Security (RLS) policies.
-- **Deployment:** Ready for Render (Server) and Vercel (Client).
-
----
-
-## 🗄️ Database Schema (`/supabase/migrations/001_initial_schema.sql`)
-
-- **`farms`**: `id`, `farmer_name`, `farm_name`, `location`, `total_area_hectares`, `created_at`
-- **`plots`**: `id`, `farm_id`, `plot_name`, `crop_type`, `growth_stage`, `created_at`
-- **`advisories`**: `id`, `plot_id`, `query_text`, `condition_diagnosis`, `action_plan` (JSONB), `urgency_level`, `created_at`
-
----
-
-## 🚀 Quickstart Guide
-
-### 1. Configure Environment Variables
-
-**Backend (`/server/.env`):**
-```env
-PORT=5000
-NODE_ENV=development
-CLIENT_URL=http://localhost:5173
-GEMINI_API_KEY=your_gemini_api_key_here
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
-```
-
-**Frontend (`/client/.env`):**
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key_here
-VITE_API_BASE_URL=http://localhost:5000
-```
-
-*(Note: The server includes an automatic, intelligent in-memory fallback store and agronomy reasoning engine so the app runs smoothly out-of-the-box even before API keys are plugged in!)*
-
----
-
-### 2. Apply Database Migration to Supabase
-
-Run the migration script:
-```bash
-npm run migrate --prefix server
-```
-Or paste `/supabase/migrations/001_initial_schema.sql` into your Supabase Dashboard **SQL Editor** and click **Run**.
-
----
-
-### 3. Run the Development Servers
-
-In terminal 1 (Express Backend):
-```bash
-cd server
-npm run dev
-```
-
-In terminal 2 (Vite Frontend):
-```bash
-cd client
-npm run dev
-```
-
-Visit: **http://localhost:5173**
-Backend health check: **http://localhost:5000/api/health**
+## Submission summary
+**Problem:** Fragmented field observations delay consistent farm decisions and follow-through.  
+**Solution:** A coordinated AI workflow that plans, assesses, ranks, assigns, and records crop incident responses.

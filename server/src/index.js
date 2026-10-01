@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import farmsRouter from './routes/farms.js';
 import advisoryRouter from './routes/advisory.js';
 import diagnosticsRouter from './routes/diagnostics.js';
+import agentRouter from './routes/agent.js';
+import authRouter from './routes/auth.js';
 import { isSupabaseConfigured } from './config/supabase.js';
 import { isGeminiConfigured } from './config/gemini.js';
 
@@ -42,7 +44,7 @@ app.get('/api/health', (req, res) => {
         mode: isGeminiConfigured ? 'google_genai_live' : 'agronomy_rule_engine'
       }
     },
-    message: 'Agricultural Crop Advisory Server Operational (Chaotic UI Enabled)'
+    message: 'FieldOps Agentic Agriculture Operations API'
   });
 });
 
@@ -50,6 +52,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api', farmsRouter);
 app.use('/api', advisoryRouter);
 app.use('/api', diagnosticsRouter);
+app.use('/api', agentRouter);
+app.use('/api', authRouter);
 
 // Root route
 app.get('/', (req, res) => {
